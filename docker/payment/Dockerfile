@@ -20,7 +20,7 @@ ENV	SERVICE_USER=myuser \
 RUN	addgroup -g ${SERVICE_GID} ${SERVICE_GROUP} && \
 	adduser -g "${SERVICE_NAME} user" -D -H -G ${SERVICE_GROUP} -s /sbin/nologin -u ${SERVICE_UID} ${SERVICE_USER} && \
 	chmod +x /app && \
-    chown -R ${SERVICE_USER}:${SERVICE_GROUP} /app
+	chown -R ${SERVICE_USER}:${SERVICE_GROUP} /app
 
 USER ${SERVICE_USER}
 

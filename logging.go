@@ -1,8 +1,10 @@
 package payment
 
 import (
-	"github.com/go-kit/kit/log"
 	"time"
+
+	"github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log/level"
 )
 
 // LoggingMiddleware logs method calls, parameters, results, and elapsed time.
@@ -22,7 +24,15 @@ type loggingMiddleware struct {
 
 func (mw loggingMiddleware) Authorise(amount float32) (auth Authorisation, err error) {
 	defer func(begin time.Time) {
-		mw.logger.Log(
+		if err != nil {
+			level.Error(mw.logger).Log(
+				"method", "Authorise",
+				"result", "error",
+				"error", err.Error(),
+				"took", time.Since(begin),
+			)
+		}
+		level.Info(mw.logger).Log(
 			"method", "Authorise",
 			"result", auth.Authorised,
 			"took", time.Since(begin),
