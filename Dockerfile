@@ -1,4 +1,4 @@
-FROM golang:1.23
+FROM golang:1.23 AS base
 
 COPY . /go/src/github.com/microservices-demo/payment/
 
@@ -9,6 +9,10 @@ RUN cd /go/src/github.com/microservices-demo/payment/ \
     # && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app github.com/microservices-demo/payment/cmd/paymentsvc
     && CGO_ENABLED=0 GOOS=linux go build -toolexec="orchestrion toolexec" -a -installsuffix cgo -o /app github.com/microservices-demo/payment/cmd/paymentsvc
 
-CMD ["/app", "-port=8080"]
+FROM golang:1.23
 
-EXPOSE 8080
+WORKDIR /
+COPY --from=base /app /
+EXPOSE 80
+
+CMD ["/app", "-port=80"]

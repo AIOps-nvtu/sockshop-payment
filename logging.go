@@ -24,21 +24,21 @@ type loggingMiddleware struct {
 
 func (mw loggingMiddleware) Authorise(amount float32) (auth Authorisation, err error) {
 	defer func(begin time.Time) {
-		if err != nil {
-			level.Error(mw.logger).Log(
-				"method", "Authorise",
-				"result", "error",
-				"error", err.Error(),
-				"took", time.Since(begin),
-			)
-		}
 		level.Info(mw.logger).Log(
 			"method", "Authorise",
 			"result", auth.Authorised,
 			"took", time.Since(begin),
 		)
 	}(time.Now())
-	return mw.next.Authorise(amount)
+	auth, err = mw.next.Authorise(amount)
+	if err != nil {
+		level.Error(mw.logger).Log(
+			"method", "Authorise",
+			"result", "error",
+			"error", err.Error(),
+		)
+	}
+	return auth, err
 }
 
 func (mw loggingMiddleware) Health() (health []Health) {
